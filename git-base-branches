@@ -1,0 +1,12 @@
+#!/bin/sh
+
+FEATURE_BRANCH=$1
+
+if [ -z "$FEATURE_BRANCH" ]; then
+  echo "Usage: git-base-branches FEATURE_BRANCH"
+  exit 128
+fi
+
+NEAREST_MERGE_BASE=$(git merge-base $FEATURE_BRANCH $(git for-each-ref --format='%(refname:short)' refs/heads/ | grep -v $FEATURE_BRANCH))
+
+git branch --contains $NEAREST_MERGE_BASE | grep -v $FEATURE_BRANCH | sed 's/^[[:space:]\*]*//g'

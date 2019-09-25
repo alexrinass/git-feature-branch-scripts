@@ -1,0 +1,15 @@
+#!/bin/sh
+
+#
+# Wether or not a feature branch is mergeable into a base branch.
+#
+
+FEATURE_BRANCH=$1
+BASE_BRANCH=$2
+
+if [ -z "$FEATURE_BRANCH" ] || [ -z "$BASE_BRANCH" ]; then
+  echo "Usage: git-compare-branches FEATURE_BRANCH BASE_BRANCH"
+  exit 128
+fi
+
+git merge-tree $(git merge-base $FEATURE_BRANCH $BASE_BRANCH) $FEATURE_BRANCH $BASE_BRANCH

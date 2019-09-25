@@ -1,0 +1,31 @@
+#!/bin/sh
+
+#
+# Compares a feature branch with a base branch and outputs different
+# comparisons:
+#
+# - The commits behind the base branch
+# - The commits ahead of the base branch
+# - Changes introduced by the feature branch on a diff-basis
+#
+
+FEATURE_BRANCH=$1
+BASE_BRANCH=$2
+
+if [ -z "$FEATURE_BRANCH" ] || [ -z "$BASE_BRANCH" ]; then
+  echo "Usage: git-compare-branches FEATURE_BRANCH BASE_BRANCH"
+  exit 128
+fi
+
+MERGE_BASE=$(git merge-base $FEATURE_BRANCH $BASE_BRANCH)
+# Base branch is n ahead
+
+echo "** Base branche $BASE_BRANCH is ahead of the following commits:\n"
+git rev-list --no-merges --oneline $FEATURE_BRANCH..$BASE_BRANCH
+
+# Feature branch is m ahead
+echo "\n** Feature branch $FEATURE_BRANCH is ahead of the following commits:\n"
+git rev-list --no-merges --oneline $BASE_BRANCH..$FEATURE_BRANCH
+
+echo "\nComparison by changeset\n"
+git cherry -v $BASE_BRANCH $FEATURE_BRANCH $MERGE_BASE
